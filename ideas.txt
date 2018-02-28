@@ -1,0 +1,48 @@
+##############################
+# Pseudo code                #
+##############################
+
+
+Code Start page in JS
+
+Destroy the Start page
+
+On Click load a random question (from question array?) and dynamically create question page (make a function for this)
+Set timer to 30 seconds
+
+Logic Tree
+    1 Happy Path - If the user guesses correct answer
+        *Destroy current Question Div
+        *Create the post question div. Display positive message
+        *Update the correct answer variable
+        *Begin timer for 4 seconds
+        *After 4 seconds load next question
+    2. Wrong guess path - If the user guesses wrong 
+        *Destroy current Question Div
+        *Create the post question div. Display negative message
+        *Update the Incorrect answer variable
+        *Begin timer for 4 seconds
+        *After 4 seconds load next question
+    3. No guess path - If the user spends more than 30 seconds
+        *Destroy current Question Div
+        *Create the post question div. Display timeout message
+        *Update the unanswered answer variable
+        *Begin timer for 4 seconds
+        *After 4 seconds load next question
+
+When game is over
+    Distroy current question div
+    Build div that
+        * Displays Correct Answer #, incorrect Answer #, and unanswered Answer #
+        * Displays reset button
+        *When reset button is pressed generate start page
+
+
+
+##############################
+# Things to Remember         #
+##############################
+
+
+Make an array of questions. When a question is asked splice (remove) its index from the array of questions.
+The random function (selectRandomQuestion) that selects a question should use Math.random and go between 1 and questionArray.length
