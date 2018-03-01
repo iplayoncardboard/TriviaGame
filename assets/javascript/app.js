@@ -21,10 +21,32 @@ var question1 = new Question(
     ],
     "https://orig00.deviantart.net/71b6/f/2016/040/9/6/profile_picture_by_disse86-d9r3n1i.jpg"
 );
+var question2 = new Question(
+    "Test Question 2", 
+    [
+        {   text:"This is answer 1 of question 2",
+            correct: false
+        },
+        {
+            text: "This is answer 2 of question 2 ",
+            correct: false
+        },
+        {
+            text:"this is answer 3 of question 2. The right answer ",
+            correct:true
+        },
+        {
+            text:"this is answer 4 of question 2",
+            correct:false
+        }
+    ],
+    "http://r.ddmcdn.com/s_f/o_1/cx_462/cy_245/cw_1349/ch_1349/w_720/APL/uploads/2015/06/caturday-shutterstock_149320799.jpg"
+);
 
 
-let questionArray =[question1];
-
+let correctAnswers = 0;
+let incorrectAnwers = 0;
+let unanswered = 0;
 
 
 //Game Logic
@@ -33,46 +55,122 @@ $(document).ready(function(){
     startGame();
     $('.start-button').on('click', function(){
         $('.start-button').remove();
-        generateQuestion(questionArray[0]); //change this to be dynamic
+        displayQuestion(question.generateRandomQuestion()); //change this to be dynamic
+        //show timer
+        $('.timer-container').css('display','block')
+        //start timer
+        if(!timer.timeout){
+              timer.questionCountdown();
+        }
     });
-    console.log(questionArray[0]);
+
+    $(document.body).on('click', '.cr', function(){
+        correctAnswers ++;
+        correctMessage(question.chosenQuestion); //change this to be dynamic
+        console.log('Correct Answers:',correctAnswers); 
+    });
 });
 
+let timer = {
+
+    time: 10,
+    timerRunning: false,
+    timeout: false,
+
+    resetQuestionTime: function(){
+        this.time = 5;
+        this.timerRunning = false;
+        $(".timer-container span").text(timer.time);
+    },
+
+    questionCountdown: function(){
+        if(!this.timerRunning){
+            interval= setInterval(timer.countdown, 1000)
+            this.timerRunning= true;
+        }
+    },
+
+    countdown:function(){
+        if(timer.time > 0){ 
+            timer.time--;
+            $(".timer-container span").text(timer.time);
+        }
+       else timer.setTimeout();
+    },
+    setTimeout: function() {
+        this.timerRunning = false;
+        this.timeout = true;
+    },
+    stopTimer: function(){
+        clearInterval(interval);
+        this.timerRunning = false
+    }
+
+}
+
+let question = {
+
+    questionArray:[question1, question2],
+    quizArray: [],
+    //copies questionArray into quizArray
+    setQuizArray: function(){
+        this.quizArray = this.questionArray.slice(0);
+    },
+    //generates a random number between 0 and array length (exclusive), chooses a question at random, and removes it from array
+    generateRandomQuestion:function(){
+        let randomIndex = Math.floor(Math.random()*(this.quizArray.length));
+        let chosenQuestion = this.quizArray[randomIndex];
+        this.quizArray.splice(randomIndex,1);
+       return chosenQuestion;
+    }
+}
+
+function correctMessage(qst){
+    timer.stopTimer();
+    $('.question-container').empty();
+    $('<h3>').text('Correct!!!').addClass('correct-message').appendTo('.question-container');
+    showImage(qst);
+    setTimeout(question.generateRandomQuestion(), 4000);
+}
 
 
-
-function generateQuestion(question){
+function displayQuestion (question){
+    $('.question-container').empty();
     let questionText = $('<h3>')
-    questionText.addClass("question-text")
+    questionText.addClass('.question-text')
     questionText.text(question.questionText);
-    questionText.appendTo('.container');
+    questionText.appendTo('.question-container');
     question.answerArray.forEach(function(value, index){
         //loop through and make a <p> for each answer. Attach true or false as a class with if else statement
-       
         let answerText=$('<p>');
         answerText.text(value.text);
         if(value.correct){
-            answerText.addClass("cr");
+            answerText.addClass('cr');
         }
         else{
-            answerText.addClass("nc");
+            answerText.addClass('nc');
         }
-        answerText.appendTo('.container');
+        answerText.appendTo('.question-container');
     });
 
+    timer.resetQuestionTime();
+    timer.questionCountdown();
 
-    //startTimer() <-- need to add this
 }
 
+function showImage(question){
+    let questionImage =$('<img>');
+    questionImage.attr("src",question.questionImage);
+    questionImage.appendTo(".question-container");
+}
 
 function startGame(){
    let startButton = $('<button>');
    startButton.text('Start');
    startButton.addClass('start-button');
    startButton.appendTo(".container");
-
+   question.setQuizArray();
 }
-
 
 
 //Question constructor
