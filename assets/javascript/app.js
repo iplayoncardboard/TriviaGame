@@ -44,21 +44,17 @@ var question2 = new QuestionTemplate(
 );
 
 
-let correctAnswers = 0;
-let incorrectAnwers = 0;
-let unanswered = 0;
+
 
 
 //Game Logic
 $(document).ready(function(){
     //Generate the start screen
     let currentQuestion;
-    startGame();
+    game.startGame();
     $('.start-button').on('click', function(){
         $('.start-button').remove();
-        currentQuestion = question.generateRandomQuestion(question.quizArray);
-        displayQuestion(currentQuestion); //change this to be dynamic
-
+        question.generateRandomQuestion();
         //show timer
         $('.timer-container').css('display','block')
         //start timer
@@ -68,13 +64,67 @@ $(document).ready(function(){
     });
 
     $(document.body).on('click', '.cr', function(){
-        console.log("currentQuestion2: ", currentQuestion);
-        correctAnswers ++;
-        correctMessage(currentQuestion); //change this to be dynamic
+        game.correctAnswers ++;
+        game.correctMessage(question.activeQuestion);
         console.log('Correct Answers:',); 
     });
 });
 
+//controls setup, Score Properties, and display methdods for the game.
+let game = {
+    correctAnswers: 0,
+    incorrectAnwers: 0,
+    unanswered: 0,
+     startGame: function(){
+        let startButton = $('<button>');
+        startButton.text('Start');
+        startButton.addClass('start-button');
+        startButton.appendTo(".container");
+        question.setQuizArray();
+     }, 
+     displayQuestion: function  (qstObj){
+        $('.question-container').empty();
+        let questionText = $('<h3>')
+        questionText.addClass('.question-text')
+        questionText.text(qstObj.questionText);
+        questionText.appendTo('.question-container');
+        qstObj.answerArray.forEach(function(value, index){
+            //loop through and make a <p> for each answer. Attach true or false as a class with if else statement
+            let answerText=$('<p>');
+            answerText.text(value.text);
+            if(value.correct){
+                answerText.addClass('cr');
+            }
+            else{
+                answerText.addClass('nc');
+            }
+            answerText.appendTo('.question-container');
+        });
+    
+        timer.resetQuestionTime();
+        timer.questionCountdown();
+    },
+     correctMessage: function(qst){
+        console.log("correct MSG:",qst);
+        timer.stopTimer();
+        $('.question-container').empty();
+        $('<h3>').text('Correct!!!').addClass('correct-message').appendTo('.question-container');
+        this.showImage(qst);
+        setTimeout(function() {
+            question.generateRandomQuestion(question.quizArray)
+        }, 4000);
+    },
+    
+    
+     showImage:function(qst){
+        let questionImage =$('<img>');
+        questionImage.attr("src",qst.questionImage);
+        questionImage.appendTo(".question-container");
+    }
+
+}
+
+// controls timer functionality for the game
 let timer = {
 
     time: 10,
@@ -112,6 +162,7 @@ let timer = {
 
 }
 
+//controls question generation and question functionality for the game
 let question = {
 
     questionArray:[question1, question2],
@@ -124,65 +175,19 @@ let question = {
     },
 
     //generates a random number between 0 and array length (exclusive), chooses a question at random, and removes it from array
-    generateRandomQuestion:function(array){
-        console.log("QuizArray Length", array.length)
-        let randomIndex = Math.floor(Math.random()*(array.length));
-        console.log("Generating Random Question: ", randomIndex);
-        activeQuestion = array[randomIndex];
-        array.splice(randomIndex,1);
-       return activeQuestion;
+    generateRandomQuestion:function(){
+        let randomIndex = Math.floor(Math.random()*(this.quizArray.length));
+        this.activeQuestion = this.quizArray[randomIndex];
+        console.log("active ?", this.activeQuestion);
+        this.quizArray.splice(randomIndex,1);
+        game.displayQuestion(this.activeQuestion);
     }
-}
-
-function correctMessage(qst){
-    console.log("correct MSG:",qst);
-    timer.stopTimer();
-    $('.question-container').empty();
-    $('<h3>').text('Correct!!!').addClass('correct-message').appendTo('.question-container');
-    showImage(qst);
-    setTimeout(function() {
-        question.generateRandomQuestion(question.quizArray)
-    }, 4000);
-}
-
-
-function displayQuestion (question){
-    $('.question-container').empty();
-    let questionText = $('<h3>')
-    questionText.addClass('.question-text')
-    questionText.text(question.questionText);
-    questionText.appendTo('.question-container');
-    question.answerArray.forEach(function(value, index){
-        //loop through and make a <p> for each answer. Attach true or false as a class with if else statement
-        let answerText=$('<p>');
-        answerText.text(value.text);
-        if(value.correct){
-            answerText.addClass('cr');
-        }
-        else{
-            answerText.addClass('nc');
-        }
-        answerText.appendTo('.question-container');
-    });
-
-    timer.resetQuestionTime();
-    timer.questionCountdown();
 
 }
 
-function showImage(question){
-    let questionImage =$('<img>');
-    questionImage.attr("src",question.questionImage);
-    questionImage.appendTo(".question-container");
-}
 
-function startGame(){
-   let startButton = $('<button>');
-   startButton.text('Start');
-   startButton.addClass('start-button');
-   startButton.appendTo(".container");
-   question.setQuizArray();
-}
+
+
 
 
 //Question constructor
