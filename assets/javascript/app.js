@@ -1,6 +1,6 @@
 
 // Test Question
-var question1 = new Question(
+var question1 = new QuestionTemplate(
     "Test Question", 
     [
         {   text:"This is answer 1",
@@ -21,7 +21,7 @@ var question1 = new Question(
     ],
     "https://orig00.deviantart.net/71b6/f/2016/040/9/6/profile_picture_by_disse86-d9r3n1i.jpg"
 );
-var question2 = new Question(
+var question2 = new QuestionTemplate(
     "Test Question 2", 
     [
         {   text:"This is answer 1 of question 2",
@@ -52,10 +52,13 @@ let unanswered = 0;
 //Game Logic
 $(document).ready(function(){
     //Generate the start screen
+    let currentQuestion;
     startGame();
     $('.start-button').on('click', function(){
         $('.start-button').remove();
-        displayQuestion(question.generateRandomQuestion()); //change this to be dynamic
+        currentQuestion = question.generateRandomQuestion(question.quizArray);
+        displayQuestion(currentQuestion); //change this to be dynamic
+
         //show timer
         $('.timer-container').css('display','block')
         //start timer
@@ -65,9 +68,10 @@ $(document).ready(function(){
     });
 
     $(document.body).on('click', '.cr', function(){
+        console.log("currentQuestion2: ", currentQuestion);
         correctAnswers ++;
-        correctMessage(question.chosenQuestion); //change this to be dynamic
-        console.log('Correct Answers:',correctAnswers); 
+        correctMessage(currentQuestion); //change this to be dynamic
+        console.log('Correct Answers:',); 
     });
 });
 
@@ -112,25 +116,33 @@ let question = {
 
     questionArray:[question1, question2],
     quizArray: [],
+    activeQuestion:{} ,
+
     //copies questionArray into quizArray
     setQuizArray: function(){
         this.quizArray = this.questionArray.slice(0);
     },
+
     //generates a random number between 0 and array length (exclusive), chooses a question at random, and removes it from array
-    generateRandomQuestion:function(){
-        let randomIndex = Math.floor(Math.random()*(this.quizArray.length));
-        let chosenQuestion = this.quizArray[randomIndex];
-        this.quizArray.splice(randomIndex,1);
-       return chosenQuestion;
+    generateRandomQuestion:function(array){
+        console.log("QuizArray Length", array.length)
+        let randomIndex = Math.floor(Math.random()*(array.length));
+        console.log("Generating Random Question: ", randomIndex);
+        activeQuestion = array[randomIndex];
+        array.splice(randomIndex,1);
+       return activeQuestion;
     }
 }
 
 function correctMessage(qst){
+    console.log("correct MSG:",qst);
     timer.stopTimer();
     $('.question-container').empty();
     $('<h3>').text('Correct!!!').addClass('correct-message').appendTo('.question-container');
     showImage(qst);
-    setTimeout(question.generateRandomQuestion(), 4000);
+    setTimeout(function() {
+        question.generateRandomQuestion(question.quizArray)
+    }, 4000);
 }
 
 
@@ -174,7 +186,7 @@ function startGame(){
 
 
 //Question constructor
-function Question(questionText, answerArray, questionImage){
+function QuestionTemplate(questionText, answerArray, questionImage){
     this.questionText = questionText;
     this.answerArray=answerArray;
     this.questionImage = questionImage;
