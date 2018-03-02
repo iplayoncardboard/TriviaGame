@@ -61,6 +61,8 @@ $(document).ready(function(){
         }
     });
 
+
+
     $(document.body).on('click', '.cr', function(){
         game.correctAnswers ++;
         game.correctMessage(question.activeQuestion);
@@ -87,7 +89,6 @@ let game = {
         startButton.appendTo(".container");
         question.setQuizArray();
      }, 
-
      endGame:function(){
         $('.question-container').empty();
         $('<div>').addClass("end-message").text('All Done!').appendTo('.question-container');
@@ -136,6 +137,15 @@ let game = {
         let questionImage =$('<img>');
         questionImage.attr("src",qst.questionImage);
         questionImage.appendTo(".question-container");
+    },
+
+    displayTimeout: function(){
+        timer.stopTimer();
+        this.unanswered++;
+        if(question.quizArray.length>0){ 
+            question.generateRandomQuestion()}
+       else {
+           game.endGame()}
     }
 
 }
@@ -169,7 +179,8 @@ let timer = {
     },
     setTimeout: function() {
         this.timerRunning = false;
-        this.timeout = true;
+        // this.timeout = true;
+        game.displayTimeout();
     },
     stopTimer: function(){
         clearInterval(interval);
