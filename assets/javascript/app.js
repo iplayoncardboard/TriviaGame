@@ -1,48 +1,90 @@
 
 // Test Question
-var question1 = new QuestionTemplate(
-    "Test Question", 
+let question1 = new QuestionTemplate(
+    "If press too hard on your pallet knife you have a(n)...", 
     [
-        {   text:"This is answer 1",
+        {   text:"Awful Mistake",
             correct: false
         },
         {
-            text: "This is answer 2, The right answer",
+            text: "Happy Accident",
             correct: true
         },
         {
-            text:"this is answer 3",
+            text:"Happy Little Tree",
             correct:false
         },
         {
-            text:"this is answer 4",
+            text:"Problem",
             correct:false
         }
     ],
     "https://orig00.deviantart.net/71b6/f/2016/040/9/6/profile_picture_by_disse86-d9r3n1i.jpg"
 );
-var question2 = new QuestionTemplate(
-    "Test Question 2", 
+let question2 = new QuestionTemplate(
+    "After you dip your brush in paint oderless paint thinner you... ", 
     [
-        {   text:"This is answer 1 of question 2",
+        {   text:"Beat the hell out of it",
             correct: false
         },
         {
-            text: "This is answer 2 of question 2 ",
+            text: "Shake it out",
             correct: false
         },
         {
-            text:"this is answer 3 of question 2. The right answer ",
+            text:"Beat the devil out of it. ",
             correct:true
         },
         {
-            text:"this is answer 4 of question 2",
+            text:"Beat it up",
             correct:false
         }
     ],
     "http://r.ddmcdn.com/s_f/o_1/cx_462/cy_245/cw_1349/ch_1349/w_720/APL/uploads/2015/06/caturday-shutterstock_149320799.jpg"
 );
 
+let question3 = new QuestionTemplate(
+    "Which is not a color Bob commonly uses?", 
+    [
+        {   text:"Khorne Red",
+            correct: true
+        },
+        {
+            text: "Van Dyke Brown",
+            correct: false
+        },
+        {
+            text:"Phthalo Blue",
+            correct:false
+        },
+        {
+            text:"Sap Green",
+            correct:false
+        }
+    ],
+    "http://r.ddmcdn.com/s_f/o_1/cx_462/cy_245/cw_1349/ch_1349/w_720/APL/uploads/2015/06/caturday-shutterstock_149320799.jpg"
+);
+let question4 = new QuestionTemplate(
+    "What was the name of Bob's pocket squirrel pal?", 
+    [
+        {   text:"Green Been",
+            correct: false
+        },
+        {
+            text: "Pea Pod",
+            correct: true
+        },
+        {
+            text:"Rocky",
+            correct:false
+        },
+        {
+            text:"Nutter Butter",
+            correct:false
+        }
+    ],
+    "http://r.ddmcdn.com/s_f/o_1/cx_462/cy_245/cw_1349/ch_1349/w_720/APL/uploads/2015/06/caturday-shutterstock_149320799.jpg"
+);
 
 
 //Game Logic
@@ -54,7 +96,8 @@ $(document).ready(function(){
         $('.start-button').remove();
         question.generateRandomQuestion();
         //show timer
-        $('.timer-container').css('display','block')
+        $('.timer-container').css('display','block');
+        $('.question-container').css('display','block');
         //start timer
         if(!timer.timeout){
               timer.questionCountdown();
@@ -69,8 +112,12 @@ $(document).ready(function(){
         console.log('Correct Answers:',); 
     });
 
+    $(document.body).on('click','.nc',function(){
+        game.incorrectAnwers++
+        game.incorrectMessage(question.activeQuestion);
+    });
+
     $(document.body).on('click','.end-button',function(){
-        console.log("GameOVER");
         game.startGame();
         $('.start-button').remove();
         question.generateRandomQuestion();
@@ -91,7 +138,7 @@ let game = {
      }, 
      endGame:function(){
         $('.question-container').empty();
-        $('<div>').addClass("end-message").text('All Done!').appendTo('.question-container');
+        $('<div>').addClass("end-message").text('Happy Painting and God Bless...').appendTo('.question-container');
         $('<p>').addClass("end-stat").text('Correct Answers: ' + this.correctAnswers).appendTo('.question-container');
         $('<p>').addClass("end-stat").text('Incorrect Answers: ' + this.incorrectAnwers).appendTo('.question-container');
         $('<p>').addClass("end-stat").text('Unanswered: ' + this.unanswered).appendTo('.question-container');
@@ -100,7 +147,7 @@ let game = {
      displayQuestion: function  (qstObj){
         $('.question-container').empty();
         let questionText = $('<h3>')
-        questionText.addClass('.question-text')
+        questionText.addClass('question-text')
         questionText.text(qstObj.questionText);
         questionText.appendTo('.question-container');
         qstObj.answerArray.forEach(function(value, index){
@@ -118,21 +165,48 @@ let game = {
         timer.resetQuestionTime();
         timer.questionCountdown();
     },
-     correctMessage: function(qst){
+     correctMessage: function(qstObj){
         timer.stopTimer();
         $('.question-container').empty();
-        $('<h3>').text('Correct!!!').addClass('correct-message').appendTo('.question-container');
-        this.showImage(qst);
+        $('<h3>').text('Magestic like a mountain').addClass('correct-message').appendTo('.question-container');
+        this.showImage(qstObj);
         if(question.quizArray.length>0){
         setTimeout(function() {
             question.generateRandomQuestion()
         }, 4000);
         }
         else{
-            this.endGame();
-        }   
+            setTimeout(function() {
+                game.endGame()
+            }, 4000); 
+            
+        } 
     },
     
+    incorrectMessage:function(qstObj){
+        timer.stopTimer();
+        let correctAnswer = qstObj.answerArray.find(function(element){
+            return element.correct === true;
+        })
+        .text;
+        $('.question-container').empty();
+        $('<h3>').text('Keep Trying').addClass('correct-message').appendTo('.question-container');
+        $('<p>').text("The Correct Answer was: "+ correctAnswer).appendTo('.question-container');
+        this.showImage(qstObj);
+        console.log(correctAnswer);
+        if(question.quizArray.length>0){
+            setTimeout(function() {
+                question.generateRandomQuestion()
+            }, 4000);
+            }
+            else{
+                setTimeout(function() {
+                    game.endGame()
+                }, 4000); 
+                
+            } 
+    },
+
      showImage:function(qst){
         let questionImage =$('<img>');
         questionImage.attr("src",qst.questionImage);
@@ -192,7 +266,7 @@ let timer = {
 //controls question generation and question functionality for the game
 let question = {
 
-    questionArray:[question1, question2],
+    questionArray:[question1, question2,question3,question4],
     quizArray: [],
     activeQuestion:{} ,
 
