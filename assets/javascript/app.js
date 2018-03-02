@@ -45,8 +45,6 @@ var question2 = new QuestionTemplate(
 
 
 
-
-
 //Game Logic
 $(document).ready(function(){
     //Generate the start screen
@@ -68,6 +66,13 @@ $(document).ready(function(){
         game.correctMessage(question.activeQuestion);
         console.log('Correct Answers:',); 
     });
+
+    $(document.body).on('click','.end-button',function(){
+        console.log("GameOVER");
+        game.startGame();
+        $('.start-button').remove();
+        question.generateRandomQuestion();
+    });
 });
 
 //controls setup, Score Properties, and display methdods for the game.
@@ -82,6 +87,15 @@ let game = {
         startButton.appendTo(".container");
         question.setQuizArray();
      }, 
+
+     endGame:function(){
+        $('.question-container').empty();
+        $('<div>').addClass("end-message").text('All Done!').appendTo('.question-container');
+        $('<p>').addClass("end-stat").text('Correct Answers: ' + this.correctAnswers).appendTo('.question-container');
+        $('<p>').addClass("end-stat").text('Incorrect Answers: ' + this.incorrectAnwers).appendTo('.question-container');
+        $('<p>').addClass("end-stat").text('Unanswered: ' + this.unanswered).appendTo('.question-container');
+        $('<button>').addClass("end-button").text('Start Over').appendTo('.question-container');
+     },
      displayQuestion: function  (qstObj){
         $('.question-container').empty();
         let questionText = $('<h3>')
@@ -100,21 +114,23 @@ let game = {
             }
             answerText.appendTo('.question-container');
         });
-    
         timer.resetQuestionTime();
         timer.questionCountdown();
     },
      correctMessage: function(qst){
-        console.log("correct MSG:",qst);
         timer.stopTimer();
         $('.question-container').empty();
         $('<h3>').text('Correct!!!').addClass('correct-message').appendTo('.question-container');
         this.showImage(qst);
+        if(question.quizArray.length>0){
         setTimeout(function() {
-            question.generateRandomQuestion(question.quizArray)
+            question.generateRandomQuestion()
         }, 4000);
+        }
+        else{
+            this.endGame();
+        }   
     },
-    
     
      showImage:function(qst){
         let questionImage =$('<img>');
@@ -196,9 +212,3 @@ function QuestionTemplate(questionText, answerArray, questionImage){
     this.answerArray=answerArray;
     this.questionImage = questionImage;
 }
-
-
-
-
-
-
