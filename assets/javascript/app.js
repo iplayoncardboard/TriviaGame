@@ -19,8 +19,7 @@ let question1 = new QuestionTemplate(
             correct:false
         }
     ],
-    "https://orig00.deviantart.net/71b6/f/2016/040/9/6/profile_picture_by_disse86-d9r3n1i.jpg"
-);
+    "./assets/images/happyAccident.jpg");
 let question2 = new QuestionTemplate(
     "After you dip your brush in paint oderless paint thinner you... ", 
     [
@@ -32,7 +31,7 @@ let question2 = new QuestionTemplate(
             correct: false
         },
         {
-            text:"Beat the devil out of it. ",
+            text:"Beat the devil out of it",
             correct:true
         },
         {
@@ -40,8 +39,7 @@ let question2 = new QuestionTemplate(
             correct:false
         }
     ],
-    "http://r.ddmcdn.com/s_f/o_1/cx_462/cy_245/cw_1349/ch_1349/w_720/APL/uploads/2015/06/caturday-shutterstock_149320799.jpg"
-);
+    "./assets/images/beatTheDevil.gif");
 
 let question3 = new QuestionTemplate(
     "Which is not a color Bob commonly uses?", 
@@ -62,8 +60,7 @@ let question3 = new QuestionTemplate(
             correct:false
         }
     ],
-    "http://r.ddmcdn.com/s_f/o_1/cx_462/cy_245/cw_1349/ch_1349/w_720/APL/uploads/2015/06/caturday-shutterstock_149320799.jpg"
-);
+    "./assets/images/paints.jpg");
 let question4 = new QuestionTemplate(
     "What was the name of Bob's pocket squirrel pal?", 
     [
@@ -71,7 +68,7 @@ let question4 = new QuestionTemplate(
             correct: false
         },
         {
-            text: "Pea Pod",
+            text: "Peapod",
             correct: true
         },
         {
@@ -83,7 +80,7 @@ let question4 = new QuestionTemplate(
             correct:false
         }
     ],
-    "http://r.ddmcdn.com/s_f/o_1/cx_462/cy_245/cw_1349/ch_1349/w_720/APL/uploads/2015/06/caturday-shutterstock_149320799.jpg"
+    "./assets/images/peapod.jpg"
 );
 
 
@@ -168,7 +165,7 @@ let game = {
      correctMessage: function(qstObj){
         timer.stopTimer();
         $('.question-container').empty();
-        $('<h3>').text('Magestic like a mountain').addClass('correct-message').appendTo('.question-container');
+        $('<h3>').text('It\'s Your World').addClass('correct-message').appendTo('.question-container');
         this.showImage(qstObj);
         if(question.quizArray.length>0){
         setTimeout(function() {
@@ -210,6 +207,7 @@ let game = {
      showImage:function(qst){
         let questionImage =$('<img>');
         questionImage.attr("src",qst.questionImage);
+        questionImage.addClass("question-img");
         questionImage.appendTo(".question-container");
     },
 
@@ -227,12 +225,12 @@ let game = {
 // controls timer functionality for the game
 let timer = {
 
-    time: 10,
+    time: 30,
     timerRunning: false,
     timeout: false,
 
     resetQuestionTime: function(){
-        this.time = 5;
+        this.time = 30;
         this.timerRunning = false;
         $(".timer-container span").text(timer.time);
     },
@@ -279,7 +277,6 @@ let question = {
     generateRandomQuestion:function(){
         let randomIndex = Math.floor(Math.random()*(this.quizArray.length));
         this.activeQuestion = this.quizArray[randomIndex];
-        console.log("active ?", this.activeQuestion);
         this.quizArray.splice(randomIndex,1);
         game.displayQuestion(this.activeQuestion);
     }

@@ -86,6 +86,11 @@ p{
 
 }
 
+.question-img{
+    width: 400px;
+    height: 350px;
+}
+
 .question-text{
     font-size: 1.2;
     font-weight: bold;
