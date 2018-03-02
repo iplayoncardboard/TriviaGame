@@ -127,6 +127,9 @@ let game = {
     incorrectAnwers: 0,
     unanswered: 0,
      startGame: function(){
+        this.correctAnswers =0;
+        this.incorrectAnwers=0;
+        this.unanswered = 0;    
         let startButton = $('<button>');
         startButton.text('Start');
         startButton.addClass('start-button');
