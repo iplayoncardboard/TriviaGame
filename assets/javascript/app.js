@@ -1,5 +1,5 @@
 
-// Test Question
+// Questions
 let question1 = new QuestionTemplate(
     "If press too hard on your pallet knife you have a(n)...", 
     [
@@ -102,18 +102,18 @@ $(document).ready(function(){
     });
 
 
-
+    //Event listener for correct answer
     $(document.body).on('click', '.cr', function(){
         game.correctAnswers ++;
         game.correctMessage(question.activeQuestion);
         console.log('Correct Answers:',); 
     });
-
+    //Event listener for incorrect answers
     $(document.body).on('click','.nc',function(){
         game.incorrectAnwers++
         game.incorrectMessage(question.activeQuestion);
     });
-
+    //Event listener for the start over button
     $(document.body).on('click','.end-button',function(){
         game.startGame();
         $('.start-button').remove();
@@ -123,19 +123,26 @@ $(document).ready(function(){
 
 //controls setup, Score Properties, and display methdods for the game.
 let game = {
+    //Answer variables
     correctAnswers: 0,
     incorrectAnwers: 0,
     unanswered: 0,
+    //Function to set the initial state of the game 
      startGame: function(){
+         //Zero out values
         this.correctAnswers =0;
         this.incorrectAnwers=0;
         this.unanswered = 0;    
+        //generate start button
         let startButton = $('<button>');
         startButton.text('Start');
         startButton.addClass('start-button');
         startButton.appendTo(".container");
+        //initializes the quiz array that will be the working array 
         question.setQuizArray();
      }, 
+
+     //displays end game statistics
      endGame:function(){
         $('.question-container').empty();
         $('<div>').addClass("end-message").text('Happy Painting and God Bless...').appendTo('.question-container');
@@ -144,6 +151,7 @@ let game = {
         $('<p>').addClass("end-stat").text('Unanswered: ' + this.unanswered).appendTo('.question-container');
         $('<button>').addClass("end-button").text('Start Over').appendTo('.question-container');
      },
+     //Displays question
      displayQuestion: function  (qstObj){
         $('.question-container').empty();
         let questionText = $('<h3>')
@@ -165,11 +173,17 @@ let game = {
         timer.resetQuestionTime();
         timer.questionCountdown();
     },
+
+    //Displays correct answer content. 
      correctMessage: function(qstObj){
+         //stops the timer
         timer.stopTimer();
+        //empties question container div
         $('.question-container').empty();
+        //Display correct answer screen content for 4 seconds
         $('<h3>').text('It\'s Your World').addClass('correct-message').appendTo('.question-container');
         this.showImage(qstObj);
+        //checks for remaining questions in working array and moves to nexxt question or ends game
         if(question.quizArray.length>0){
         setTimeout(function() {
             question.generateRandomQuestion()
@@ -182,18 +196,23 @@ let game = {
             
         } 
     },
-    
+    //Displays incorrect answer content. 
     incorrectMessage:function(qstObj){
+        //stops the timer
         timer.stopTimer();
+        //gets the correct answer that will be displayed to user
         let correctAnswer = qstObj.answerArray.find(function(element){
             return element.correct === true;
         })
         .text;
+        //empties question container div
         $('.question-container').empty();
+        //Display inccorrect answer screen content for 4 seconds
         $('<h3>').text('Keep Trying').addClass('correct-message').appendTo('.question-container');
         $('<p>').text("The Correct Answer was: "+ correctAnswer).appendTo('.question-container');
         this.showImage(qstObj);
-        console.log(correctAnswer);
+        //checks for remaining questions in working array and moves to nexxt question or ends game
+
         if(question.quizArray.length>0){
             setTimeout(function() {
                 question.generateRandomQuestion()
@@ -206,21 +225,21 @@ let game = {
                 
             } 
     },
-
+    //function to how the image related to the question
      showImage:function(qst){
         let questionImage =$('<img>');
         questionImage.attr("src",qst.questionImage);
         questionImage.addClass("question-img");
         questionImage.appendTo(".question-container");
     },
-
+    //Incremets unanswered when the user times out. 
     displayTimeout: function(){
         timer.stopTimer();
         this.unanswered++;
-        if(question.quizArray.length>0){ 
-            question.generateRandomQuestion()}
-       else {
-           game.endGame()}
+        //displays incorrect answer message
+        this.incorrectMessage(question.activeQuestion);
+        //increment unanswered questions
+        
     }
 
 }
@@ -254,7 +273,6 @@ let timer = {
     },
     setTimeout: function() {
         this.timerRunning = false;
-        // this.timeout = true;
         game.displayTimeout();
     },
     stopTimer: function(){
@@ -285,9 +303,6 @@ let question = {
     }
 
 }
-
-
-
 
 
 
